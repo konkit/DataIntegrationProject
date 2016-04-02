@@ -14,6 +14,8 @@ public class DataintegrationApplication implements CommandLineRunner {
 
     @Autowired
     private TwitterService twitterService;
+
+    @Autowired
     private GuardianService guardianService;
 
 	public static void main(String[] args) {
@@ -21,8 +23,6 @@ public class DataintegrationApplication implements CommandLineRunner {
 	}
 
     public void run(String[] args) throws IOException {
-        //twitterService.start();
-        guardianService = new GuardianService();
         guardianService.start();
     }
 }

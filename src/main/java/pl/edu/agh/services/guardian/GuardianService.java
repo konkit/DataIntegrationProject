@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.json.*;
 import org.springframework.stereotype.Service;
+import pl.edu.agh.entities.GuardianArticle;
 
 import java.io.IOException;
 import java.net.URL;
@@ -40,9 +41,19 @@ public class GuardianService {
         scanner.close();
 
         JSONObject jsonObject = new JSONObject(str);
-        if(! jsonObject.getString("status").equals("OK")) return;
+        JSONObject jsonResponse = jsonObject.getJSONObject("response");
+        JSONArray resultsArray = jsonResponse.getJSONArray("results");
 
-        JSONObject result = jsonObject.getJSONArray("results").getJSONObject(0);
+        for(int i = 0; i < resultsArray.length(); i++) {
+            JSONObject singleResult = resultsArray.getJSONObject(i);
+            GuardianArticle article = new GuardianArticle();
+            article.setWebTitle(singleResult.getString("webTitle"));
+            article.setApiUrl(singleResult.getString("apiUrl"));
+            article.setWebUrl(singleResult.getString("webUrl"));
+            article.setSectionName(singleResult.getString("sectionName"));
+            article.setPublicationDate(singleResult.getString("webPublicationDate"));
+            System.out.println(article.toString());
+        }
     }
 
 }
