@@ -2,10 +2,12 @@ package pl.edu.agh.services.guardian;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.json.*;
 import org.springframework.stereotype.Service;
 import pl.edu.agh.entities.GuardianArticle;
+import pl.edu.agh.entities.IGuardianRepository;
 
 import java.io.IOException;
 import java.net.URL;
@@ -26,6 +28,9 @@ public class GuardianService {
     private String apiEndpoint;
 
     static Logger logger = LoggerFactory.getLogger(GuardianService.class);
+
+    @Autowired
+    IGuardianRepository guardianRepository;
 
     public void start() throws IOException {
         BlockingQueue<String> queue = new LinkedBlockingQueue<>(10000);
@@ -53,6 +58,8 @@ public class GuardianService {
             article.setSectionName(singleResult.getString("sectionName"));
             article.setPublicationDate(singleResult.getString("webPublicationDate"));
             System.out.println(article.toString());
+
+            guardianRepository.save(article);
         }
     }
 
