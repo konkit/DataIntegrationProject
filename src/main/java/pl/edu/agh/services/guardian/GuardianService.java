@@ -57,6 +57,8 @@ public class GuardianService {
             for(int i = 0; i < resultsArray.length(); i++) {
                 JSONObject singleResult = resultsArray.getJSONObject(i);
 
+                JSONObject fields = singleResult.getJSONObject("fields");
+
                 GuardianArticle article = new GuardianArticle();
 
                 article.setWebTitle(singleResult.getString("webTitle"));
@@ -64,12 +66,27 @@ public class GuardianService {
                 article.setWebUrl(singleResult.getString("webUrl"));
                 article.setSectionName(singleResult.getString("sectionName"));
                 article.setPublicationDate(singleResult.getString("webPublicationDate"));
+                //getting body (content) of the article
+                article.setText(fields.getString("body"));
 
                 article.setSearch(search);
 
-                Author author = getAuthor();
-                article.setAuthor(author);
+                //getting author (contributor) of the article
+                JSONArray tags = singleResult.getJSONArray("tags");
+                JSONObject contributorTag = null;
 
+                for(int j = 0; j < tags.length(); j++) {
+                    JSONObject singleTag = tags.getJSONObject(j);
+                    if(singleTag.getString("type") == "contributor") {
+                        contributorTag = singleTag;
+                        break;
+                    }
+                }
+
+                if(contributorTag != null) {
+                    Author author = getAuthor(contributorTag);
+                    article.setAuthor(author);
+                }
                 guardianRepository.save(article);
             }
         } catch(MalformedURLException e) {
@@ -81,9 +98,28 @@ public class GuardianService {
         }
     }
 
-    private Author getAuthor() {
-        //TODO: TwitterService can serve as an example to fix it.
-        return null;
+    private Author getAuthor(JSONObject contributorTag) {
+
+        String guardianName = contributorTag.getString("webTitle");
+        String twitterName = contributorTag.getString("twitterHandle");
+
+        Author author = authorRepository.findByGuardianName(guardianName);
+
+        //byc moze ma konto na Twitterze
+        if(author == null) {
+            author = authorRepository.findByTwitterName(twitterName);
+
+            if(author != null) {
+                author.setGuardianName(guardianName);
+            }
+            else {
+                author = Author.createFromGuardian(guardianName, twitterName);
+            }
+
+            authorRepository.save(author);
+        }
+
+        return author;
     }
 }
 

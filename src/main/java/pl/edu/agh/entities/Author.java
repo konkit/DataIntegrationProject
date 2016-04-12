@@ -26,6 +26,13 @@ public class Author {
         return author;
     }
 
+    public static Author createFromGuardian(String guardianName, String twitterName) {
+        Author author = new Author();
+        author.guardianName = guardianName;
+        author.twitterName = twitterName;
+        return author;
+    }
+
     public long getId() {
         return id;
     }

@@ -8,4 +8,5 @@ import org.springframework.data.repository.query.Param;
  */
 public interface AuthorRepository extends CrudRepository<Author, Long> {
     Author findByTwitterName(@Param("twitter_name") String twitterName);
+    Author findByGuardianName(@Param("guardian_name") String guardianName);
 }
