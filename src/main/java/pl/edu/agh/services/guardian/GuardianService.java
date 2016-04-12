@@ -6,10 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.json.*;
 import org.springframework.stereotype.Service;
-import pl.edu.agh.entities.GuardianArticle;
-import pl.edu.agh.entities.IGuardianRepository;
+import pl.edu.agh.entities.*;
+import twitter4j.User;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
@@ -32,36 +33,57 @@ public class GuardianService {
     @Autowired
     IGuardianRepository guardianRepository;
 
-    public void start() throws IOException {
-        BlockingQueue<String> queue = new LinkedBlockingQueue<>(10000);
+    @Autowired
+    AuthorRepository authorRepository;
 
-        String address = new String(apiEndpoint + "&api-key=" + key);
+    public void fetchNow(Search search) {
+        try {
+            BlockingQueue<String> queue = new LinkedBlockingQueue<>(10000);
 
-        URL url = new URL(address);
-        Scanner scanner = new Scanner(url.openStream());
-        String str = new String();
-        while(scanner.hasNext()) {
-            str += scanner.nextLine();
-        }
-        scanner.close();
+            String address = new String(apiEndpoint + "&api-key=" + key);
 
-        JSONObject jsonObject = new JSONObject(str);
-        JSONObject jsonResponse = jsonObject.getJSONObject("response");
-        JSONArray resultsArray = jsonResponse.getJSONArray("results");
+            URL url = new URL(address);
+            Scanner scanner = new Scanner(url.openStream());
+            String str = new String();
+            while(scanner.hasNext()) {
+                str += scanner.nextLine();
+            }
+            scanner.close();
 
-        for(int i = 0; i < resultsArray.length(); i++) {
-            JSONObject singleResult = resultsArray.getJSONObject(i);
-            GuardianArticle article = new GuardianArticle();
-            article.setWebTitle(singleResult.getString("webTitle"));
-            article.setApiUrl(singleResult.getString("apiUrl"));
-            article.setWebUrl(singleResult.getString("webUrl"));
-            article.setSectionName(singleResult.getString("sectionName"));
-            article.setPublicationDate(singleResult.getString("webPublicationDate"));
-            System.out.println(article.toString());
+            JSONObject jsonObject = new JSONObject(str);
+            JSONObject jsonResponse = jsonObject.getJSONObject("response");
+            JSONArray resultsArray = jsonResponse.getJSONArray("results");
 
-            guardianRepository.save(article);
+            for(int i = 0; i < resultsArray.length(); i++) {
+                JSONObject singleResult = resultsArray.getJSONObject(i);
+
+                GuardianArticle article = new GuardianArticle();
+
+                article.setWebTitle(singleResult.getString("webTitle"));
+                article.setApiUrl(singleResult.getString("apiUrl"));
+                article.setWebUrl(singleResult.getString("webUrl"));
+                article.setSectionName(singleResult.getString("sectionName"));
+                article.setPublicationDate(singleResult.getString("webPublicationDate"));
+
+                article.setSearch(search);
+
+                Author author = getAuthor();
+                article.setAuthor(author);
+
+                guardianRepository.save(article);
+            }
+        } catch(MalformedURLException e) {
+            logger.error("Error fetching from Guardian!!!" + e.getMessage());
+            e.printStackTrace();
+        } catch(IOException e) {
+            logger.error("Error fetching from Guardian!!!" + e.getMessage());
+            e.printStackTrace();
         }
     }
 
+    private Author getAuthor() {
+        //TODO: TwitterService can serve as an example to fix it.
+        return null;
+    }
 }
 

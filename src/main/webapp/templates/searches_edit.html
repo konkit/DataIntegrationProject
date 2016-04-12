@@ -1,0 +1,12 @@
+<form role="form">
+  <div class="form-group">
+    <label for="twitterHashtags">Twitter hashtags, please split by commas</label>
+    <input type="text" class="form-control" id="twitterHashtags" ng-model="search.twitterHashtags">
+  </div>
+  <div class="form-group">
+    <label for="guardianTags">Guardian tags</label>
+    <input type="text" class="form-control" id="guardianTags" ng-model="search.guardianTags">
+  </div>
+
+  <button type="submit" class="btn btn-default" ng-click="update(search)">Submit</button>
+</form>

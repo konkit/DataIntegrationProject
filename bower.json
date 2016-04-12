@@ -1,0 +1,29 @@
+{
+  "name": "dataintegration",
+  "homepage": "https://github.com/konkit/DataIntegrationProject",
+  "authors": [
+    "Lukasz Tenerowicz <konkit@gmail.com>",
+    "Slawomir Bukowiec <slawomir.bukowiec@gmail.com>"
+  ],
+  "description": "",
+  "main": "index.html",
+  "moduleType": [],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "src/main/webapp/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "^1.4.0",
+    "jquery": "~2.1.4",
+    "bootstrap": "~3.3.5",
+    "angular-bootstrap": "~0.14.1",
+    "angular-resource": "^1.4.0",
+    "angular-ui-router": "^0.2.7"
+  }
+}

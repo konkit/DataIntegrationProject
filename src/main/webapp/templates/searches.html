@@ -1,0 +1,32 @@
+<h1>Searches</h1>
+
+
+
+<div class="container">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Guardian Tags</th>
+        <th>Twitter Hashtags</th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="search in list">
+        <td>{{search.id}}</td>
+        <td>{{search.guardianTags}}</td>
+        <td>{{search.twitterHashtags}}</td>
+        <td><a href="#/searches/show/{{search.id}}" class="btn btn-default">Show</a></td>
+        <td><a href="#/searches/edit/{{search.id}}" class="btn btn-default">Edit</a></td>
+        <td><button class="btn btn-danger" ng-click="delete(search)">Remove</button></td>
+        <td><button class="btn btn-success" ng-click="fetchNow(search)">Fetch now!</button></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <a href="#/searches/new" class="btn btn-success">New search</a>
+</div>

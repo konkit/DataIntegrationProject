@@ -1,0 +1,21 @@
+<div class="container">
+  <h1>Search object</h1>
+
+  <a href="#/searches" class="btn btn-default">Back</a>
+
+  <div>
+    <p><strong>Id:</strong>{{search.id}}</p>
+    <p><strong>Twitter hashtags:</strong> {{search.twitterHashtags}}</p>
+    <p><strong>Guardian tags:</strong> {{search.guardianTags}}</p>
+
+    <p>Tweets:</p>
+    <p ng-repeat="tweet in search.tweets">
+      {{tweet}}
+    </p>
+
+    <p>Guardian Articles:</p>
+    <p ng-repeat="article in search.guardianArticles">
+      {{article}}
+    </p>
+  </div>
+</div>

@@ -21,14 +21,17 @@ public class Tweet {
     private GeoLocation coordinates;
 
     @ManyToOne
-    Author user;
+    Author author;
 
-    public Author getTweetAuthor() {
-        return user;
+    @ManyToOne
+    private Search search;
+
+    public Author getAuthor() {
+        return author;
     }
 
-    public void setTweetUser(Author author) {
-        user = author;
+    public void setAuthor(Author author) {
+        this.author = author;
     }
 
     public Long getId() {
@@ -85,5 +88,13 @@ public class Tweet {
 
     public void setCoordinates(GeoLocation coordinates) {
         this.coordinates = coordinates;
+    }
+
+    public Search getSearch() {
+        return search;
+    }
+
+    public void setSearch(Search search) {
+        this.search = search;
     }
 }

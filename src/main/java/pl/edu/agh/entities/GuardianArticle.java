@@ -1,9 +1,6 @@
 package pl.edu.agh.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 /**
  * Created by Mere on 2016-04-03.
@@ -21,6 +18,12 @@ public class GuardianArticle {
     private String publicationDate;
     private String webUrl;
     private String apiUrl;
+
+    @ManyToOne
+    Author author;
+
+    @ManyToOne
+    private Search search;
 
     public Long getId() {
         return id;
@@ -81,5 +84,21 @@ public class GuardianArticle {
     @Override
     public String toString() {
         return "Web title: " + getWebTitle() + ", Web url: " + getWebUrl();
+    }
+
+    public Author getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(Author author) {
+        this.author = author;
+    }
+
+    public Search getSearch() {
+        return search;
+    }
+
+    public void setSearch(Search search) {
+        this.search = search;
     }
 }

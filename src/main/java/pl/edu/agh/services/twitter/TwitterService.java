@@ -22,8 +22,11 @@ import com.twitter.hbc.httpclient.auth.Authentication;
 import com.twitter.hbc.httpclient.auth.OAuth1;
 import com.twitter.hbc.twitter4j.Twitter4jStatusClient;
 
-import pl.edu.agh.entities.TweetRepository;
-import twitter4j.StatusListener;
+import pl.edu.agh.entities.*;
+import twitter4j.*;
+import twitter4j.conf.ConfigurationBuilder;
+
+import javax.persistence.EntityNotFoundException;
 
 @Service
 public class TwitterService {
@@ -44,7 +47,7 @@ public class TwitterService {
     TweetRepository tweetRepository;
 
     @Autowired
-    TwitterStreamListenerService twitterStreamListenerService;
+    AuthorRepository authorRepository;
 
     @Value("${threads.count}")
     private int numOfThreads;
@@ -53,38 +56,53 @@ public class TwitterService {
 
     static Logger logger = LoggerFactory.getLogger(TwitterService.class);
 
-    public void start() {
-        BlockingQueue<String> queue = new LinkedBlockingQueue<>(10000);
+    public void fetchNow(Search search) {
+        try {
+            ConfigurationBuilder cb = new ConfigurationBuilder();
+            cb.setOAuthConsumerKey(consumerKey);
+            cb.setOAuthConsumerSecret(consumerSecret);
+            cb.setOAuthAccessToken(accessToken);
+            cb.setOAuthAccessTokenSecret(accessSecret);
 
-        StatusesFilterEndpoint endpoint = new StatusesFilterEndpoint();
-        List<String> keywords = new ArrayList<>();
-        keywords.add("refugees");
-        endpoint.trackTerms(keywords);
+            Twitter twitter = new TwitterFactory(cb.build()).getInstance();
 
-        Authentication auth = new OAuth1(consumerKey, consumerSecret, accessToken, accessSecret);
+            Query query = new Query(search.getTwitterHashtags());
+            QueryResult result = twitter.search(query);
 
-        client = new ClientBuilder()
-                    .hosts(Constants.STREAM_HOST)
-                    .endpoint(endpoint)
-                    .authentication(auth)
-                    .processor(new StringDelimitedProcessor(queue))
-                    .build();
-
-        ExecutorService service = Executors.newFixedThreadPool(numOfThreads);
-
-        List<StatusListener> listeners = new ArrayList<>();
-        listeners.add(twitterStreamListenerService.createListener());
-
-        Twitter4jStatusClient t4jClient = new Twitter4jStatusClient(client, queue, listeners, service);
-
-        t4jClient.connect();
-        for (int threads = 0; threads < numOfThreads; threads++) {
-            t4jClient.process();
+            createTweets(search, result.getTweets());
+        } catch (TwitterException e) {
+            logger.info("Couldn't connect: " + e);
+            e.printStackTrace();
         }
     }
 
-    public void stop() {
-        client.stop();
+    private void createTweets(Search search, List<Status> tweetsData) {
+        for(Status status: tweetsData) {
+            Tweet tweet = new Tweet();
+
+            tweet.setTweetId(status.getId());
+            tweet.setCreated_at(status.getCreatedAt());
+            tweet.setLang(status.getLang());
+            tweet.setText(status.getText());
+            tweet.setTimestamp(status.getCreatedAt().getTime());
+            tweet.setCoordinates(status.getGeoLocation());
+
+            Author author = getAuthor(status.getUser());
+            tweet.setAuthor(author);
+            tweet.setSearch(search);
+
+            tweetRepository.save(tweet);
+        }
     }
 
+    private Author getAuthor(User user) {
+        Author author = authorRepository.findByTwitterName(user.getScreenName());
+
+        if( author == null ) {
+            author = Author.createFromTwitter(user);
+            authorRepository.save(author);
+        }
+
+        return author;
+    }
 }

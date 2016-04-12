@@ -33,4 +33,20 @@ public class Author {
     public void setId(long id) {
         this.id = id;
     }
+
+    public String getTwitterName() {
+        return twitterName;
+    }
+
+    public void setTwitterName(String twitterName) {
+        this.twitterName = twitterName;
+    }
+
+    public String getGuardianName() {
+        return guardianName;
+    }
+
+    public void setGuardianName(String guardianName) {
+        this.guardianName = guardianName;
+    }
 }

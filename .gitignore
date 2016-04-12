@@ -29,6 +29,7 @@
 
 ## File-based project format:
 *.iws
+/src/main/webapp/bower_components
 
 ## Plugin-specific files:
 
