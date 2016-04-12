@@ -2,29 +2,40 @@ package pl.edu.agh.entities;
 
 import java.util.Date;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import twitter4j.GeoLocation;
 
-@Document(collection = "tweets")
+import javax.persistence.*;
+
+@Entity
 public class Tweet {
 
     @Id
-    private String id;
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private Long id;
+
     private String text;
     private Long tweetId;
     private Date created_at;
     private Long timestamp;
     private String lang;
     private GeoLocation coordinates;
-    private String screenName;
 
-    public String getId() {
+    @ManyToOne
+    Author user;
+
+    public Author getTweetAuthor() {
+        return user;
+    }
+
+    public void setTweetUser(Author author) {
+        user = author;
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -75,13 +86,4 @@ public class Tweet {
     public void setCoordinates(GeoLocation coordinates) {
         this.coordinates = coordinates;
     }
-
-    public String getScreenName() {
-        return screenName;
-    }
-
-    public void setScreenName(String screenName) {
-        this.screenName = screenName;
-    }
-
 }

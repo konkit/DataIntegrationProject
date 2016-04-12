@@ -1,4 +1,4 @@
-package pl.edu.agh.services;
+package pl.edu.agh.services.twitter;
 
 import java.util.ArrayList;
 import java.util.List;

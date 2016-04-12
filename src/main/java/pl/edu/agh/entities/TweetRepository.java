@@ -1,9 +1,7 @@
 package pl.edu.agh.entities;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.repository.CrudRepository;
 
-public interface TweetRepository extends MongoRepository<Tweet, String> {
+public interface TweetRepository extends CrudRepository<Tweet, Long> {
 
-//    Tweet findByTweetId(@Param("tweetId") Long tweetId);
 }

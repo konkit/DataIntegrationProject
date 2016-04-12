@@ -1,4 +1,4 @@
-package pl.edu.agh.services;
+package pl.edu.agh.services.twitter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.edu.agh.entities.Tweet;
 
+import pl.edu.agh.entities.AuthorRepository;
 import pl.edu.agh.entities.TweetRepository;
+import pl.edu.agh.entities.Author;
 import twitter4j.StallWarning;
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
@@ -25,6 +27,9 @@ public class TwitterStreamListenerService {
 
     @Autowired
     TweetRepository tweetRepository;
+
+    @Autowired
+    AuthorRepository authorRepository;
 
     public StatusListener createListener() {
 
@@ -48,11 +53,14 @@ public class TwitterStreamListenerService {
                 tweet.setText(status.getText());
                 tweet.setTimestamp(status.getCreatedAt().getTime());
                 tweet.setCoordinates(status.getGeoLocation());
-                tweet.setScreenName(status.getUser().getScreenName());
+
+                Author author = Author.createFromTwitter(status.getUser());
+                authorRepository.save(author);
+
+                tweet.setTweetUser(author);
+                tweetRepository.save(tweet);
 
                 System.out.println(tweet.getText() + "\n\n\n");
-
-                tweetRepository.save(tweet);
             }
 
             @Override

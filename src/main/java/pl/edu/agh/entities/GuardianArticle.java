@@ -1,16 +1,20 @@
 package pl.edu.agh.entities;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 /**
  * Created by Mere on 2016-04-03.
  */
-@Document(collection = "guardianArticles")
+@Entity
 public class GuardianArticle {
 
     @Id
-    private String id;
+    @GeneratedValue(strategy= GenerationType.AUTO)
+    private Long id;
+
     private String text;
     private String sectionName;
     private String webTitle;
@@ -18,11 +22,11 @@ public class GuardianArticle {
     private String webUrl;
     private String apiUrl;
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

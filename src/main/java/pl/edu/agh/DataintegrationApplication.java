@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import pl.edu.agh.services.TwitterService;
+import pl.edu.agh.services.twitter.TwitterService;
 import pl.edu.agh.services.guardian.GuardianService;
 
 import java.io.IOException;
@@ -24,5 +24,6 @@ public class DataintegrationApplication implements CommandLineRunner {
 
     public void run(String[] args) throws IOException {
         guardianService.start();
+        twitterService.start();
     }
 }
