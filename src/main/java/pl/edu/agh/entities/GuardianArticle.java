@@ -12,6 +12,7 @@ public class GuardianArticle {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
 
+    @Column(columnDefinition = "text")
     private String text;
     private String sectionName;
     private String webTitle;
