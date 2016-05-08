@@ -1,0 +1,334 @@
+databaseChangeLog:
+- changeSet:
+    id: 1462705623182-1
+    author: konkit (generated)
+    changes:
+    - createSequence:
+        sequenceName: hibernate_sequence
+- changeSet:
+    id: 1462705623182-2
+    author: konkit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              constraints:
+                nullable: false
+            name: id
+            type: BIGINT
+        - column:
+            name: guardian_name
+            type: VARCHAR(255)
+        - column:
+            name: twitter_name
+            type: VARCHAR(255)
+        tableName: author
+- changeSet:
+    id: 1462705623182-3
+    author: konkit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              constraints:
+                nullable: false
+            name: id
+            type: BIGINT
+        - column:
+            name: api_url
+            type: VARCHAR(255)
+        - column:
+            name: publication_date
+            type: VARCHAR(255)
+        - column:
+            name: section_name
+            type: VARCHAR(255)
+        - column:
+            name: text
+            type: TEXT
+        - column:
+            name: web_title
+            type: VARCHAR(255)
+        - column:
+            name: web_url
+            type: VARCHAR(255)
+        - column:
+            name: author_id
+            type: BIGINT
+        - column:
+            name: search_id
+            type: BIGINT
+        tableName: guardian_article
+- changeSet:
+    id: 1462705623182-4
+    author: konkit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              constraints:
+                nullable: false
+            name: id
+            type: BIGINT
+        - column:
+            name: guardian_tags
+            type: VARCHAR(255)
+        - column:
+            name: twitter_hashtags
+            type: VARCHAR(255)
+        tableName: search
+- changeSet:
+    id: 1462705623182-5
+    author: konkit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              constraints:
+                nullable: false
+            name: search_id
+            type: BIGINT
+        - column:
+            constraints:
+              constraints:
+                nullable: false
+            name: guardian_articles_id
+            type: BIGINT
+        tableName: search_guardian_articles
+- changeSet:
+    id: 1462705623182-6
+    author: konkit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              constraints:
+                nullable: false
+            name: search_id
+            type: BIGINT
+        - column:
+            constraints:
+              constraints:
+                nullable: false
+            name: tweets_id
+            type: BIGINT
+        tableName: search_tweets
+- changeSet:
+    id: 1462705623182-7
+    author: konkit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              constraints:
+                nullable: false
+            name: id
+            type: BIGINT
+        - column:
+            name: coordinates
+            type: BYTEA
+        - column:
+            name: created_at
+            type: TIMESTAMP(6) WITHOUT TIME ZONE
+        - column:
+            name: lang
+            type: VARCHAR(255)
+        - column:
+            name: text
+            type: VARCHAR(255)
+        - column:
+            name: timestamp
+            type: BIGINT
+        - column:
+            name: tweet_id
+            type: BIGINT
+        - column:
+            name: author_id
+            type: BIGINT
+        - column:
+            name: search_id
+            type: BIGINT
+        tableName: tweet
+- changeSet:
+    id: 1462705623182-8
+    author: konkit (generated)
+    changes:
+    - addPrimaryKey:
+        columnNames: id
+        constraintName: author_pkey
+        tableName: author
+- changeSet:
+    id: 1462705623182-9
+    author: konkit (generated)
+    changes:
+    - addPrimaryKey:
+        columnNames: id
+        constraintName: guardian_article_pkey
+        tableName: guardian_article
+- changeSet:
+    id: 1462705623182-10
+    author: konkit (generated)
+    changes:
+    - addPrimaryKey:
+        columnNames: search_id, guardian_articles_id
+        constraintName: search_guardian_articles_pkey
+        tableName: search_guardian_articles
+- changeSet:
+    id: 1462705623182-11
+    author: konkit (generated)
+    changes:
+    - addPrimaryKey:
+        columnNames: id
+        constraintName: search_pkey
+        tableName: search
+- changeSet:
+    id: 1462705623182-12
+    author: konkit (generated)
+    changes:
+    - addPrimaryKey:
+        columnNames: search_id, tweets_id
+        constraintName: search_tweets_pkey
+        tableName: search_tweets
+- changeSet:
+    id: 1462705623182-13
+    author: konkit (generated)
+    changes:
+    - addPrimaryKey:
+        columnNames: id
+        constraintName: tweet_pkey
+        tableName: tweet
+- changeSet:
+    id: 1462705623182-14
+    author: konkit (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: guardian_articles_id
+        constraintName: uk_q064bq82oox1ellrkjw7ydn2b
+        tableName: search_guardian_articles
+- changeSet:
+    id: 1462705623182-15
+    author: konkit (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: tweets_id
+        constraintName: uk_t48h8jur5bn0hhg349nllwcnk
+        tableName: search_tweets
+- changeSet:
+    id: 1462705623182-16
+    author: konkit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: search_id
+        baseTableName: search_guardian_articles
+        constraintName: fk_8uhprxwwjptihwxten6repqv3
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: search
+- changeSet:
+    id: 1462705623182-17
+    author: konkit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: author_id
+        baseTableName: guardian_article
+        constraintName: fk_cro5mrrq8wusqodmk5gubppjn
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: author
+- changeSet:
+    id: 1462705623182-18
+    author: konkit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: search_id
+        baseTableName: search_tweets
+        constraintName: fk_f4bwf418mgpk9th5kfca19vs7
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: search
+- changeSet:
+    id: 1462705623182-19
+    author: konkit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: search_id
+        baseTableName: tweet
+        constraintName: fk_gr3m6gpdcvthpktuga5bal96
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: search
+- changeSet:
+    id: 1462705623182-20
+    author: konkit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: author_id
+        baseTableName: tweet
+        constraintName: fk_n9airrqcdqj4ihp03v32agn1g
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: author
+- changeSet:
+    id: 1462705623182-21
+    author: konkit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: search_id
+        baseTableName: guardian_article
+        constraintName: fk_pxjglx38j9r6i0nl14n25cc0i
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: search
+- changeSet:
+    id: 1462705623182-22
+    author: konkit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: guardian_articles_id
+        baseTableName: search_guardian_articles
+        constraintName: fk_q064bq82oox1ellrkjw7ydn2b
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: guardian_article
+- changeSet:
+    id: 1462705623182-23
+    author: konkit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: tweets_id
+        baseTableName: search_tweets
+        constraintName: fk_t48h8jur5bn0hhg349nllwcnk
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: tweet
+
