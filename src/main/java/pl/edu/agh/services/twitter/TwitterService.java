@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.twitter.hbc.ClientBuilder;
@@ -49,6 +50,9 @@ public class TwitterService {
     @Autowired
     AuthorRepository authorRepository;
 
+    @Autowired
+    SearchRepository searchRepository;
+
     @Value("${threads.count}")
     private int numOfThreads;
 
@@ -70,6 +74,7 @@ public class TwitterService {
             QueryResult result = twitter.search(query);
 
             createTweets(search, result.getTweets());
+            searchRepository.save(search);
         } catch (TwitterException e) {
             logger.info("Couldn't connect: " + e);
             e.printStackTrace();
@@ -78,20 +83,24 @@ public class TwitterService {
 
     private void createTweets(Search search, List<Status> tweetsData) {
         for(Status status: tweetsData) {
-            Tweet tweet = new Tweet();
+            try {
+                Tweet tweet = new Tweet();
 
-            tweet.setTweetId(status.getId());
-            tweet.setCreated_at(status.getCreatedAt());
-            tweet.setLang(status.getLang());
-            tweet.setText(status.getText());
-            tweet.setTimestamp(status.getCreatedAt().getTime());
-            tweet.setCoordinates(status.getGeoLocation());
+                tweet.setTweetId(status.getId());
+                tweet.setCreated_at(status.getCreatedAt());
+                tweet.setLang(status.getLang());
+                tweet.setText(status.getText());
+                tweet.setTimestamp(status.getCreatedAt().getTime());
+                tweet.setCoordinates(status.getGeoLocation());
 
-            Author author = getAuthor(status.getUser());
-            tweet.setAuthor(author);
-            tweet.setSearch(search);
+                Author author = getAuthor(status.getUser());
+                tweet.setAuthor(author);
+                tweet.setSearch(search);
 
-            tweetRepository.save(tweet);
+                tweetRepository.save(tweet);
+            } catch( DataIntegrityViolationException e ) {
+                System.out.println(e.getMessage());
+            }
         }
     }
 

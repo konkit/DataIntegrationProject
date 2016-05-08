@@ -15,6 +15,8 @@ public class GuardianArticle {
     @Column(columnDefinition = "text")
     private String text;
     private String sectionName;
+
+    @Column(unique = true)
     private String webTitle;
     private String publicationDate;
     private String webUrl;

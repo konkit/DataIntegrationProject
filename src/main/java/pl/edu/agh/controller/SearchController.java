@@ -5,12 +5,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.social.twitter.api.Twitter;
 import org.springframework.web.bind.annotation.*;
-import pl.edu.agh.entities.Search;
-import pl.edu.agh.entities.SearchRepository;
+import pl.edu.agh.entities.*;
 import pl.edu.agh.services.guardian.GuardianService;
 import pl.edu.agh.services.twitter.TwitterService;
 
 import javax.validation.Valid;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/searches")
@@ -18,6 +18,12 @@ public class SearchController {
 
     @Autowired
     private SearchRepository searchRepository;
+
+    @Autowired
+    private TweetRepository tweetRepository;
+
+    @Autowired
+    private IGuardianRepository guardianRepository;
 
     @Autowired
     private TwitterService twitterService;
@@ -36,8 +42,13 @@ public class SearchController {
     }
 
     @RequestMapping(value="/{id}", method=RequestMethod.GET)
-    public Search get(@PathVariable("id") long id) {
-        return this.searchRepository.findOne(id);
+    public SearchDTO get(@PathVariable("id") long id) {
+        Search search = this.searchRepository.findOne(id);
+        SearchDTO searchDTO = new SearchDTO();
+        searchDTO.setFromSearch(search);
+        searchDTO.setTweetsCount(tweetRepository.countBySearch(search));
+        searchDTO.setGuardianArticlesCount(guardianRepository.countBySearch(search));
+        return searchDTO;
     }
 
     @RequestMapping(value="/{id}", method=RequestMethod.PUT)

@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.json.*;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import pl.edu.agh.entities.*;
 import twitter4j.User;
@@ -55,39 +56,43 @@ public class GuardianService {
             JSONArray resultsArray = jsonResponse.getJSONArray("results");
 
             for(int i = 0; i < resultsArray.length(); i++) {
-                JSONObject singleResult = resultsArray.getJSONObject(i);
+                try {
+                    JSONObject singleResult = resultsArray.getJSONObject(i);
 
-                JSONObject fields = singleResult.getJSONObject("fields");
+                    JSONObject fields = singleResult.getJSONObject("fields");
 
-                GuardianArticle article = new GuardianArticle();
+                    GuardianArticle article = new GuardianArticle();
 
-                article.setWebTitle(singleResult.getString("webTitle"));
-                article.setApiUrl(singleResult.getString("apiUrl"));
-                article.setWebUrl(singleResult.getString("webUrl"));
-                article.setSectionName(singleResult.getString("sectionName"));
-                article.setPublicationDate(singleResult.getString("webPublicationDate"));
-                //getting body (content) of the article
-                article.setText(fields.getString("body"));
+                    article.setWebTitle(singleResult.getString("webTitle"));
+                    article.setApiUrl(singleResult.getString("apiUrl"));
+                    article.setWebUrl(singleResult.getString("webUrl"));
+                    article.setSectionName(singleResult.getString("sectionName"));
+                    article.setPublicationDate(singleResult.getString("webPublicationDate"));
+                    //getting body (content) of the article
+                    article.setText(fields.getString("body"));
 
-                article.setSearch(search);
+                    article.setSearch(search);
 
-                //getting author (contributor) of the article
-                JSONArray tags = singleResult.getJSONArray("tags");
-                JSONObject contributorTag = null;
+                    //getting author (contributor) of the article
+                    JSONArray tags = singleResult.getJSONArray("tags");
+                    JSONObject contributorTag = null;
 
-                for(int j = 0; j < tags.length(); j++) {
-                    JSONObject singleTag = tags.getJSONObject(j);
-                    if(singleTag.getString("type") == "contributor") {
-                        contributorTag = singleTag;
-                        break;
+                    for(int j = 0; j < tags.length(); j++) {
+                        JSONObject singleTag = tags.getJSONObject(j);
+                        if(singleTag.getString("type") == "contributor") {
+                            contributorTag = singleTag;
+                            break;
+                        }
                     }
-                }
 
-                if(contributorTag != null) {
-                    Author author = getAuthor(contributorTag);
-                    article.setAuthor(author);
+                    if(contributorTag != null) {
+                        Author author = getAuthor(contributorTag);
+                        article.setAuthor(author);
+                    }
+                    guardianRepository.save(article);
+                } catch( DataIntegrityViolationException e ) {
+                    System.out.println(e.getMessage());
                 }
-                guardianRepository.save(article);
             }
         } catch(MalformedURLException e) {
             logger.error("Error fetching from Guardian!!!" + e.getMessage());

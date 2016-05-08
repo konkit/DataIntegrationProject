@@ -79,11 +79,8 @@ liquibase {
         main {
             changeLogFile 'src/main/resources/db/changelog/db.changelog-master.yaml'
             url project.ext.postgresUrl
-            referenceUrl project.ext.postgresUrl
             username project.ext.postgresUsername
             password project.ext.postgresPassword
-            referenceUsername project.ext.postgresUsername
-            referencePassword project.ext.postgresPassword
         }
     }
 

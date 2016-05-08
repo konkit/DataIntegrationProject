@@ -14,6 +14,8 @@ public class Tweet {
     private Long id;
 
     private String text;
+
+    @Column(unique = true)
     private Long tweetId;
     private Date created_at;
     private Long timestamp;

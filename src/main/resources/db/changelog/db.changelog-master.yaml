@@ -331,4 +331,18 @@ databaseChangeLog:
         onUpdate: NO ACTION
         referencedColumnNames: id
         referencedTableName: tweet
+- changeSet:
+    id: 1462705623183-1
+    author: konkit (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: web_title
+        tableName: guardian_article
+- changeSet:
+    id: 1462705623183-2
+    author: konkit (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: tweet_id
+        tableName: tweet
 
