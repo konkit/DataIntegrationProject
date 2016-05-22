@@ -52,9 +52,15 @@ public class GuardianService {
     @Autowired
     AuthorRepository authorRepository;
 
+    @Autowired
+    SearchRepository searchRepository;
+
     @Async
     public void fetchNow(Search search) {
         try {
+            search.setTwitterSearchStatus("searching");
+            searchRepository.save(search);
+
             BlockingQueue<String> queue = new LinkedBlockingQueue<>(10000);
 
             String guardianTagsStr = "";
@@ -127,14 +133,21 @@ public class GuardianService {
                 }
 
                 page_num++;
+                Thread.sleep(2500);
             }
 
-        } catch(MalformedURLException e) {
+            search.setTwitterSearchStatus("finished");
+            searchRepository.save(search);
+
+//        } catch(MalformedURLException e) {
+//            logger.error("Error fetching from Guardian!!!" + e.getMessage());
+//            e.printStackTrace();
+        } catch(Exception e) {
             logger.error("Error fetching from Guardian!!!" + e.getMessage());
             e.printStackTrace();
-        } catch(IOException e) {
-            logger.error("Error fetching from Guardian!!!" + e.getMessage());
-            e.printStackTrace();
+
+            search.setTwitterSearchStatus("error");
+            searchRepository.save(search);
         }
     }
 

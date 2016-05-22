@@ -26,6 +26,10 @@ public class Search implements Serializable {
     @OneToMany
     private Set<GuardianArticle> guardianArticles;
 
+    private String twitterSearchStatus;
+
+    private String guardianSearchStatus;
+
     public Long getId() {
         return id;
     }
@@ -48,5 +52,21 @@ public class Search implements Serializable {
 
     public void setGuardianTags(String guardianTags) {
         this.guardianTags = guardianTags;
+    }
+
+    public String getTwitterSearchStatus() {
+        return twitterSearchStatus;
+    }
+
+    public void setTwitterSearchStatus(String twitterSearchStatus) {
+        this.twitterSearchStatus = twitterSearchStatus;
+    }
+
+    public String getGuardianSearchStatus() {
+        return guardianSearchStatus;
+    }
+
+    public void setGuardianSearchStatus(String guardianSearchStatus) {
+        this.guardianSearchStatus = guardianSearchStatus;
     }
 }

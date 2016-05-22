@@ -16,11 +16,18 @@ public class SearchDTO {
 
     private Long guardianArticlesCount;
 
+    private String twitterSearchStatus;
+
+    private String guardianSearchStatus;
+
     public void setFromSearch(Search search) {
         id = search.getId();
 
         twitterHashtags = search.getTwitterHashtags();
         guardianTags = search.getGuardianTags();
+
+        twitterSearchStatus = search.getTwitterSearchStatus();
+        guardianSearchStatus = search.getGuardianSearchStatus();
     }
 
     public Long getId() {
@@ -61,5 +68,21 @@ public class SearchDTO {
 
     public void setGuardianTags(String guardianTags) {
         this.guardianTags = guardianTags;
+    }
+
+    public String getTwitterSearchStatus() {
+        return twitterSearchStatus;
+    }
+
+    public void setTwitterSearchStatus(String twitterSearchStatus) {
+        this.twitterSearchStatus = twitterSearchStatus;
+    }
+
+    public String getGuardianSearchStatus() {
+        return guardianSearchStatus;
+    }
+
+    public void setGuardianSearchStatus(String guardianSearchStatus) {
+        this.guardianSearchStatus = guardianSearchStatus;
     }
 }

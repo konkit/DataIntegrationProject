@@ -345,4 +345,26 @@ databaseChangeLog:
     - addUniqueConstraint:
         columnNames: tweet_id
         tableName: tweet
+- changeSet:
+    id: 1462705623184-1
+    author: konkit
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            name: twitter_search_status
+            type: varchar(255)
+        schemaName: public
+        tableName: search
+- changeSet:
+    id: 1462705623184-2
+    author: konkit
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            name: guardian_search_status
+            type: varchar(255)
+        schemaName: public
+        tableName: search
 
