@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.json.*;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import pl.edu.agh.entities.*;
 import twitter4j.User;
@@ -51,6 +52,7 @@ public class GuardianService {
     @Autowired
     AuthorRepository authorRepository;
 
+    @Async
     public void fetchNow(Search search) {
         try {
             BlockingQueue<String> queue = new LinkedBlockingQueue<>(10000);

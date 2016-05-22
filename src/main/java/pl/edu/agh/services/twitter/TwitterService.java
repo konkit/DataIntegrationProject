@@ -1,33 +1,18 @@
 package pl.edu.agh.services.twitter;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
-import com.twitter.hbc.ClientBuilder;
-import com.twitter.hbc.core.Constants;
-import com.twitter.hbc.core.endpoint.StatusesFilterEndpoint;
-import com.twitter.hbc.core.processor.StringDelimitedProcessor;
-import com.twitter.hbc.httpclient.BasicClient;
-import com.twitter.hbc.httpclient.auth.Authentication;
-import com.twitter.hbc.httpclient.auth.OAuth1;
-import com.twitter.hbc.twitter4j.Twitter4jStatusClient;
 
 import pl.edu.agh.entities.*;
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
-
-import javax.persistence.EntityNotFoundException;
 
 @Service
 public class TwitterService {
@@ -56,12 +41,14 @@ public class TwitterService {
     @Value("${threads.count}")
     private int numOfThreads;
 
-    private BasicClient client = null;
-
     static Logger logger = LoggerFactory.getLogger(TwitterService.class);
 
+    @Async
     public void fetchNow(Search search) {
         try {
+            search.setTwitterSearchStatus("searching");
+            searchRepository.save(search);
+
             ConfigurationBuilder cb = new ConfigurationBuilder();
             cb.setOAuthConsumerKey(consumerKey);
             cb.setOAuthConsumerSecret(consumerSecret);
@@ -70,14 +57,46 @@ public class TwitterService {
 
             Twitter twitter = new TwitterFactory(cb.build()).getInstance();
 
-            Query query = new Query(search.getTwitterHashtags());
-            QueryResult result = twitter.search(query);
+            String twitterHashtags = search.getTwitterHashtags();
+            for(String hashtag : twitterHashtags.split(",")) {
 
-            createTweets(search, result.getTweets());
+                Query query = new Query(hashtag);
+                long lastID = Long.MAX_VALUE;
+                query.setCount(100);
+
+                while (true) {
+                    Thread.sleep(2500);
+
+                    QueryResult result = twitter.search(query);
+                    List<Status> tweets = result.getTweets();
+
+                    createTweets(search, tweets);
+                    searchRepository.save(search);
+
+                    if( tweets.size() < 100 ) {
+                        break;
+                    }
+
+                    for( Status cntTweet : tweets ) {
+                        if(cntTweet.getId() < lastID) {
+                            lastID = cntTweet.getId();
+                        }
+                    }
+
+                    query.setMaxId(lastID-1);
+                }
+            }
+
+
+            search.setTwitterSearchStatus("finished");
             searchRepository.save(search);
-        } catch (TwitterException e) {
-            logger.info("Couldn't connect: " + e);
+        } catch( Exception e) {
+            logger.error(e.getClass().toString());
+            logger.error(e.getMessage());
             e.printStackTrace();
+
+            search.setTwitterSearchStatus("error");
+            searchRepository.save(search);
         }
     }
 
