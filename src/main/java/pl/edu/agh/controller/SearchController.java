@@ -10,6 +10,7 @@ import pl.edu.agh.services.guardian.GuardianService;
 import pl.edu.agh.services.twitter.TwitterService;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -34,6 +35,15 @@ public class SearchController {
     @RequestMapping(method= RequestMethod.POST)
     public Search create(@RequestBody @Valid Search search) {
         return this.searchRepository.save(search);
+    }
+
+    @RequestMapping(value = "/fetchall", method = RequestMethod.GET)
+    public void startCollectingAll() {
+        Iterable<Search> searchList = this.searchRepository.findAll();
+        for(Search search : searchList) {
+            twitterService.fetchNow(search);
+            guardianService.fetchNow(search);
+        }
     }
 
     @RequestMapping(method=RequestMethod.GET)
